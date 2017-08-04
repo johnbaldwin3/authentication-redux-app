@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "bootstrap": "^4.0.0-alpha.6",
+    "immutability-helper": "^2.3.0",
+    "js-cookie": "^2.1.4",
     "react": "^15.6.1",
     "react-addons-css-transition-group": "^15.6.0",
     "react-addons-transition-group": "^15.6.0",
@@ -13,15 +15,19 @@
     "reactstrap": "^4.8.0",
     "redux": "^3.7.2",
     "redux-form": "^7.0.3",
-    "redux-thunk": "^2.2.0"
+    "redux-thunk": "^2.2.0",
+    "superagent": "^3.5.2"
   },
   "devDependencies": {
+    "gh-pages": "^1.0.0",
     "react-scripts": "1.0.10"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
-  }
+    "eject": "react-scripts eject",
+    "deploy": "npm run build&&gh-pages -d build"
+  },
+  "homepage": "https://johnbaldwin3.github.io/authentication-redux-app"
 }

@@ -19,6 +19,9 @@ import App from './components/App';
 import NavLayout from './components/NavLayout';
 import RegisterUser from './containers/RegisterUser';
 import UserLogin from './containers/UserLogin';
+import Successful from './components/Successful';
+import NotAuthorized from './components/NotAuthorized';
+import LogoutScreen from './components/LogoutScreen';
 //create store for redux and apply middleware
 const createStoreWithMiddleware = applyMiddleware( thunk )(createStore);
 
@@ -31,6 +34,9 @@ ReactDOM.render(
           <Route exact path="/" component={App} />
           <Route path="/register" component={RegisterUser} />
           <Route path="/login" component={UserLogin} />
+          <Route path="/success" component={Successful} />
+          <Route path="/failed" component={NotAuthorized} />
+          <Route path="/logout" component={LogoutScreen} />
         </Switch>
       </NavLayout>
     </BrowserRouter>

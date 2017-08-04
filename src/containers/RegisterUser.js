@@ -10,14 +10,14 @@ class RegisterUser extends Component {
     super(props);
 
     this.state = {
-      name: '',
+      full_name: '',
       email: '',
       password: '',
       message: ''
     }
   }
   handleName = (e) => {
-    this.setState({name: e.target.value});
+    this.setState({full_name: e.target.value});
   }
   handleEmail = (e) => {
     this.setState({email: e.target.value});
@@ -30,9 +30,15 @@ class RegisterUser extends Component {
   }
   handleFormSubmit = (e) => {
     e.preventDefault();
-    this.setState({name: this.state.name, email: this.state.email, password: this.state.password, message: this.state.message});
+    this.setState({
+      full_name: this.state.name,
+      email: this.state.email,
+      password: this.state.password,
+      message: this.state.message
+    });
+    console.log("this.state", this.state);
     this.props.createUser(this.state, () => {
-      this.props.history.push('/login');
+      this.props.history.push('/success');
     });
   }
 render() {
@@ -45,16 +51,16 @@ render() {
       </FormGroup>
       <FormGroup>
         <Label for="exampleEmail">Email</Label>
-        <Input type="email" name="email" id="exampleEmail" placeholder="Your Email" value={this.state.value}/>
+        <Input onChange={this.handleEmail} type="email" name="email" id="exampleEmail" placeholder="Your Email" value={this.state.value}/>
       </FormGroup>
       <FormGroup>
         <Label for="examplePassword">Password</Label>
-        <Input type="password" name="password" id="examplePassword" placeholder="Create a Password" value={this.state.value}/>
+        <Input onChange={this.handlePassword} type="password" name="password" id="examplePassword" placeholder="Create a Password" value={this.state.value}/>
       </FormGroup>
 
       <FormGroup>
         <Label for="exampleText">Text Area</Label>
-        <Input type="textarea" name="text" id="exampleText" value={this.state.value}/>
+        <Input onChange={this.handleMessage} type="textarea" name="text" id="exampleText" value={this.state.value}/>
         <FormText color="muted">
           Create Your Secret Message
         </FormText>
