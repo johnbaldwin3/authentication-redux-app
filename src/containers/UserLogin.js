@@ -3,10 +3,10 @@ import React, { Component } from 'react';
 import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { createUser } from '../actions';
+import { login } from '../actions/index';
 
 
-export default class UserLogin extends Component {
+class UserLogin extends Component {
   constructor(props) {
     super(props);
 
@@ -28,14 +28,13 @@ export default class UserLogin extends Component {
       password: this.state.password
     });
     console.log("this.state", this.state);
-    this.props.loginUser(this.state, () => {
-      this.props.history.push('/login');
+    this.props.login(this.state.email, this.state.password, () => {
+      this.props.history.push('/dashboard');
     });
   }
 render() {
-  const { handleSubmit } = this.props;
   return (
-    <Form className="col-md-6 col-offset-md-3">
+    <Form onSubmit={this.handleFormSubmit} className="col-md-6 col-offset-md-3">
 
       <FormGroup>
         <Label for="exampleEmail">Email</Label>
@@ -52,3 +51,18 @@ render() {
   )
 }
 }
+
+
+const mapStateToProps = (state) => {
+    return {
+        loggedIn: !!state.token
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        login: (username, password, callback) => dispatch(login(username, password, callback))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserLogin);

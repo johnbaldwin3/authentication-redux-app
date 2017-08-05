@@ -22,6 +22,7 @@ import UserLogin from './containers/UserLogin';
 import Successful from './components/Successful';
 import NotAuthorized from './components/NotAuthorized';
 import LogoutScreen from './components/LogoutScreen';
+import Dashboard from './containers/Dashboard';
 //create store for redux and apply middleware
 const createStoreWithMiddleware = applyMiddleware( thunk )(createStore);
 
@@ -37,6 +38,7 @@ ReactDOM.render(
           <Route path="/success" component={Successful} />
           <Route path="/failed" component={NotAuthorized} />
           <Route path="/logout" component={LogoutScreen} />
+          <Route path="/dashboard" component={Dashboard} />
         </Switch>
       </NavLayout>
     </BrowserRouter>

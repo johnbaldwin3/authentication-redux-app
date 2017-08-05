@@ -2,13 +2,47 @@ import request from "superagent";
 import Cookies from 'js-cookie';
 
 export const SET_TOKEN = 'SET_TOKEN';
-export const SET_ERROR = 'SET_ERROR';
 export const SET_USER = 'SET_USER';
-export const CREATE_USER = "CREATE_USER";
+export const SET_ERROR = 'SET_ERROR';
+export const INCR_LOADING = 'INCR_LOADING';
 
 const makeActionCreator = function(actionType) {
     return function(payload) {
         return {type: actionType, payload: payload}
+    }
+}
+
+const setToken = makeActionCreator(SET_TOKEN);
+const setUser = makeActionCreator(SET_USER);
+const incrLoading = makeActionCreator(INCR_LOADING);
+const setError = makeActionCreator(SET_ERROR);
+
+const baseURL = "https://user-auth-test.herokuapp.com";
+const api = (path) => baseURL + path;
+
+export const register = ({
+    email,
+    password,
+    full_name,
+    message
+}, callback) => {
+    return (dispatch, getState) => {
+        dispatch(incrLoading(1));
+        request
+            .post(api("/register"))
+            .send({email: email, password: password, full_name: full_name, message: message})
+            .end((err, res) => {
+                dispatch(incrLoading(-1));
+                if (err) {
+                    return dispatch(setError(res.body.errors));
+                } else {
+                    dispatch(setError(null));
+                }
+
+                if (callback) {
+                    callback();
+                }
+            })
     }
 }
 
@@ -22,71 +56,50 @@ export const loadTokenFromCookie = () => {
     }
 }
 
-const setToken = makeActionCreator(SET_TOKEN);
-const setError = makeActionCreator(SET_ERROR);
-const setUser = makeActionCreator(SET_USER);
+export const login = (email, password, callback) => {
+    return (dispatch, getState) => {
+        dispatch(incrLoading(1));
+        request
+            .post(api("/login"))
+            .send({email: email, password: password})
+            .end((err, res) => {
+                dispatch(incrLoading(-1));
+                if (err) {
+                    return dispatch(setError(res.body.errors));
+                } else {
+                    dispatch(setError(null));
+                }
 
-const baseURL = "https://user-auth-test.herokuapp.com";
-const api = (path) => baseURL + path;
+                dispatch(setToken(res.body['auth_token']));
+                dispatch(getDashboard());
+                Cookies.set('token', res.body['auth_token'], {expires: 7});
 
-export const login = (email, password) => {
-    return (dispatch) => {
-        request.post(api("/login")).send({email: email, password: password}).end((err, res) => {
-            if (err) {
-                return dispatch(setError(res.body.errors));
-            } else {
-                dispatch(setError(null));
-            }
-
-            dispatch(setToken(res.body['auth_token']));
-            dispatch(getDashboard(res.body['auth_token']));
-            Cookies.set('token', res.body['auth_token'], {expires: 7});
-        });
+                if (callback) {
+                    callback();
+                }
+            })
     }
 }
 
 const getDashboard = (token) => {
     return (dispatch, getState) => {
-        request.get(api("/dashboard")).set('X-AUTH-TOKEN', getState()['token']).end((err, res) => {
-            if (err) {
-                return dispatch(setError(res.body.errors));
-            }
-            dispatch(setUser({email: res.body.email, 'full_name': res.body.full_name, message: res.body.message}))
-        })
+        token = token || getState().token;
+
+        if (!token) {
+            return;
+        }
+        dispatch(incrLoading(1));
+        request
+            .get(api("/dashboard"))
+            .set('X-AUTH-TOKEN', token)
+            .end((err, res) => {
+                if (err) {
+                    return
+                }
+                dispatch(setUser({email: res.body.email, 'full_name': res.body.full_name, message: res.body.message}))
+                dispatch(incrLoading(-1));
+            })
     }
-}
-
-// export const CREATE_USER = "CREATE_USER";
-// export const LOGIN_USER = "LOGIN_USER";
-// export const LOGGED_IN_USER = "LOGGED_IN_USER";
-//
-const ROOT_URL = 'https://user-auth-test.herokuapp.com';
-
-export const createUser = (userInfo, callback) => {
-  let user = JSON.stringify(userInfo);
-  console.log(user);
-  return (dispatch )=> fetch(`${ROOT_URL}/register`, {
-      method: "POST",
-      body: user,
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-    }
-  }).then( response => {
-      if (response.ok) {
-        callback();
-        return {
-          type: CREATE_USER,
-          payload: userInfo
-        };
-
-      } else
-      console.log("Failed");
-      this.props.history.push("/failed")
-    });
-
-    ;
-
 }
 
 // export const loggedInUser = (results) => {

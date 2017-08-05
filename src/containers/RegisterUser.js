@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { createUser } from '../actions';
+import { register } from '../actions/index';
 import { bindActionCreators } from 'redux';
 
 class RegisterUser extends Component {
@@ -37,7 +37,7 @@ class RegisterUser extends Component {
       message: this.state.message
     });
     console.log("this.state", this.state);
-    this.props.createUser(this.state, () => {
+    this.props.register(this.state, () => {
       this.props.history.push('/success');
     });
   }
@@ -78,7 +78,7 @@ function mapStateToProps(state) {
 }
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
-        createUser: createUser
+        register: register
     }, dispatch)
 }
 
